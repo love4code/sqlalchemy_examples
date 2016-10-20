@@ -1,0 +1,5 @@
+
+
+To get the database up and running I had to call 'db.db_init
+('sqlite:///testApp.db')' in the interpreter
+This created the Database Tables and columns specified in the db.py file.

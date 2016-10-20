@@ -1,0 +1,77 @@
+import unittest
+from decimal import Decimal
+from db import dal, prep_db
+from app import get_orders_by_customer
+#
+# We must test for
+# cust_name == String that is blank, a valid client name, or an invalid
+# client name
+#
+# shipped can  == None, True , or False
+#
+# details can == True, or False
+#
+# THIS MEANS WE HAVE 12 TEST CASES (3 * 3 * 2)
+#
+class TestApp(unittest.TestCase):
+    cookie_orders = [(u'wlk001',u'cookiemon', u'111-111-1111')]
+    cookie_details = [
+        (u'wlk001', u'cookiemon', u'111-111-1111',u'dark chocolate chip',
+         2, Decimal('1.00')),
+        (u'wlk001', u'cookiemon', u'111-111-1111', u'oatmeal raisin', 12,
+         Decimal('3.00'))
+    ]
+
+    @classmethod
+    def setUpClass(cls):
+        dal.db_init('sqlite:///testApp.db')
+        prep_db()
+
+    def test_orders_by_customer_blank(self):
+        """Test to see if cust_name is Blank"""
+        results = get_orders_by_customer('')
+        self.assertEqual(results, [])
+
+    def test_orders_by_customer_blank_shipped(self):
+        results = get_orders_by_customer('',True)
+        self.assertEqual(results, [])
+
+    def test_orders_by_customer_blank_notshipped(self):
+        results = get_orders_by_customer('', False)
+        self.assertEqual(results, [])
+
+    def test_orders_by_customer_blank_details(self):
+        results = get_orders_by_customer('',details=True)
+        self.assertEqual(results, [])
+
+    def test_orders_by_customer_blank_shipped_details(self):
+        results = get_orders_by_customer('',True,True)
+        self.assertEqual(results, [])
+
+    def test_orders_by_customer_blank_notshipped_details(self):
+        results = get_orders_by_customer('',False,True)
+        self.assertEqual(results, [])
+
+    def test_orders_by_customer_bad_cust(self):
+        results = get_orders_by_customer('bad name')
+        self.assertEqual(results, [])
+
+    def test_orders_by_customer_bad_cust_shipped(self):
+        results = get_orders_by_customer('bad name',True)
+        self.assertEqual(results, [])
+
+    def test_orders_by_customer_bad_cust_notshipped(self):
+        results = get_orders_by_customer('bad name', False)
+        self.assertEqual(results, [])
+
+    def test_orders_by_customer_bad_cust_details(self):
+        results = get_orders_by_customer('bad name',details=True)
+        self.assertEqual(results, [])
+
+    def test_orders_by_customer_bad_cust_shipped_details(self):
+        results = get_orders_by_customer('bad name', True, True)
+        self.assertEqual(results, [])
+
+    def test_orders_by_customer_bad_cust_notshipped_details(self):
+        results = get_orders_by_customer('bad name', False, True)
+        self.assertEqual(results, [])
